@@ -18,5 +18,6 @@ export class RegisterDto {
     password: string;
 
     @IsNotEmpty()
-    role_id: number;
+    @IsString()
+    role: string;
 }

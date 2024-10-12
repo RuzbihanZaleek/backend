@@ -1,27 +1,31 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
-import { Request, Response } from "express";
-import {MESSAGES} from '../constants/messages.constants';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+import { MESSAGES } from '../constants/messages.constants';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-    catch(exception: any, host: ArgumentsHost) {
-        const ctx = host.switchToHttp();
-        const request = ctx.getRequest<Request>();
-        const response = ctx.getResponse<Response>();
-        const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+  catch(exception: any, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<Response>();
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        const responseBody = {
-            statusCode: status,
-            timestamp: new Date().toISOString(),
-            path: request.url,
-            message: exception.message || MESSAGES.ERROR.INTERNAL_SERVER_ERROR,
-            validationErrors: ''
-        };
+    const responseBody = {
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      message: exception.message || MESSAGES.ERROR.INTERNAL_SERVER_ERROR,
+    };
 
-        if (exception.status === HttpStatus.BAD_REQUEST && exception.validationErrors) {
-            responseBody.validationErrors = exception.validationErrors;
-        }
-
-        response.status(status).json(responseBody);
-    }
+    response.status(status).json(responseBody);
+  }
 }
