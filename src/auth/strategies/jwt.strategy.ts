@@ -14,12 +14,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any): Promise<User> {
+  async validate(payload: any): Promise<Omit<User, 'password'>> {
     // Find user by email in the token payload
     const user = await this.usersService.findByEmail(payload.email);
     if (!user) {
       throw new UnauthorizedException();
     }
-    return user;
+    // Exclude the password field before returning the user
+    const { password, ...result } = user;
+    return result;
   }
 }

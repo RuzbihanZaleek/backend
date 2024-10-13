@@ -19,23 +19,28 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto, currentUser: User): Promise<User> {
-    const { password, role } = registerDto;
+  async register(
+    registerDto: RegisterDto,
+    currentUser: User,
+  ): Promise<Omit<User, 'password'>> {
+    const { email, password, role } = registerDto;
 
     // Validate the role for admin creation
     if (role === Role.Admin || role === Role.SuperAdmin) {
       const currentUserRole = currentUser.role.role_name;
       if (currentUserRole !== Role.SuperAdmin) {
-        throw new BadRequestException(
-          'Only Super Admins can create Admin & Super Admin users.',
-        );
+        throw new BadRequestException(MESSAGES.ERROR.CANNOT_CREATE_ADMIN_ROLES);
       }
+    }
+
+    // Check for uniqueness in the database
+    const existingUser = await this.usersService.findByEmail(email);
+    if (existingUser) {
+      throw new BadRequestException(MESSAGES.ERROR.EMAIL_IN_USE(email));
     }
 
     // validate the role
     const roleId = ROLE_MAPPING[role];
-    if (!roleId) throw new BadRequestException(`Invalid role: ${role}`);
-
     // hashing the password
     const hashedPassword = await bcrypt.hash(password, 10);
 

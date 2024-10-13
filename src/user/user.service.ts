@@ -13,16 +13,16 @@ export class UserService {
     private roleRepository: Repository<Role>,
   ) {}
 
-  async create(userData: Partial<User>): Promise<User> {
+  async create(userData: Partial<User>): Promise<Omit<User, 'password'>> {
     const user = this.userRepository.create(userData);
-    return this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(user);
+    
+    // Exclude the password field before returning the user
+    const { password, ...result } = savedUser;
+    return result;
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
     return this.userRepository.findOne({ where: { email }, relations: ['role'] });
-  }
-
-  async findById(id: number): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { id }, relations: ['role'] });
   }
 }

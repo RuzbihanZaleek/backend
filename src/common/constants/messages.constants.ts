@@ -11,5 +11,8 @@ export const MESSAGES = {
     INTERNAL_SERVER_ERROR: 'Internal server error',
     VALIDATION_FAILED: 'Validation failed',
     INVALID_CREDENTIALS: 'Invalid credentials',
+    CANNOT_CREATE_ADMIN_ROLES: 'Only Super Admins can create Admin & Super Admin users.',
+    INVALID_PASSWORD: 'Password must be at least 6 characters long.',
+    EMAIL_IN_USE: (email: string) => `Email ${email} is already in use.`,
   },
 };
