@@ -10,6 +10,7 @@ import { Device } from './device.entity';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Location } from 'src/location/location.entity';
+import { MESSAGES } from 'src/common/constants/messages.constants';
 
 @Injectable()
 export class DeviceService {
@@ -30,13 +31,13 @@ export class DeviceService {
       relations: ['devices'],
     });
     if (!location) {
-      throw new NotFoundException(`Location with ID ${locationId} not found`);
+      throw new NotFoundException(MESSAGES.ERROR.LOCATION.LOCATION_ID_NOT_FOUND(locationId));
     }
 
     // Check if the location already has 10 devices
     if (location.devices.length >= 10) {
       throw new BadRequestException(
-        'A location cannot have more than 10 devices',
+        MESSAGES.ERROR.DEVICE.MORE_DEVICES,
       );
     }
 
@@ -46,7 +47,7 @@ export class DeviceService {
     });
     if (existingDevice) {
       throw new ConflictException(
-        'Device with this serial number already exists',
+        MESSAGES.ERROR.DEVICE.SERIAL_NUMBER_EXISTS,
       );
     }
 
@@ -76,7 +77,7 @@ export class DeviceService {
     });
 
     if (!device) {
-      throw new NotFoundException(`Device with ID ${id} not found`);
+      throw new NotFoundException(MESSAGES.ERROR.DEVICE.DEVICE_NOT_FOUND(id));
     }
 
     return device;
@@ -90,25 +91,26 @@ export class DeviceService {
     const device = await this.findOneById(id);
 
     if (!device) {
-      throw new NotFoundException(`Device with ID ${id} not found`);
+      throw new NotFoundException(MESSAGES.ERROR.DEVICE.DEVICE_NOT_FOUND(id));
     }
 
     const { locationId, serial_number } = updateDeviceDto;
-
+    
     // Check if locationId is provided and find the location
-    if (locationId) {
+    if (locationId !== null) {
       const location = await this.locationRepository.findOne({
         where: { id: locationId },
         relations: ['devices'],
       });
+      
       if (!location) {
-        throw new NotFoundException(`Location with ID ${locationId} not found`);
+        throw new NotFoundException(MESSAGES.ERROR.LOCATION.LOCATION_ID_NOT_FOUND(locationId));
       }
 
       // Check if the location already has 10 devices
       if (location.devices.length >= 10) {
         throw new BadRequestException(
-          'A location cannot have more than 10 devices',
+          MESSAGES.ERROR.DEVICE.MORE_DEVICES,
         );
       }
 
@@ -123,7 +125,7 @@ export class DeviceService {
       });
       if (existingDevice && existingDevice.id !== device.id) {
         throw new ConflictException(
-          'Device with this serial number already exists',
+          MESSAGES.ERROR.DEVICE.SERIAL_NUMBER_EXISTS,
         );
       }
     }
@@ -136,6 +138,6 @@ export class DeviceService {
   async deleteDevice(id: number): Promise<{ message: string }> {
     const device = await this.findOneById(id);
     await this.deviceRepository.remove(device); // Remove the device
-    return { message: `Device with ID ${id} successfully deleted` };
+    return { message:  MESSAGES.SUCCESS.DEVICE.DEVICE_DELETED};
   }
 }
