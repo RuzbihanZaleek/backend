@@ -32,7 +32,7 @@ export class AuthService {
     return this.usersService.create({
       ...registerDto,
       password: hashedPassword,
-      role_id: roleId,
+      role: roleId,
     });
   }
 
