@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDatabaseConfig } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { LocationModule } from './location/location.module';
+import { DeviceModule } from './device/device.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LocationModule } from './location/location.module';
     }),
     AuthModule,
     LocationModule,
+    DeviceModule,
   ],
   controllers: [],
   providers: [],
