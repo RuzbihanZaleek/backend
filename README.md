@@ -48,7 +48,7 @@ $ npm run test
 ## Instructions
 
 - Create a PostgreSQL database for this project
-    - Right Click on the Database -> Create -> Database -> Database Name.
+    - Import the provided sql dump.
 - Provide the database credentials and other necessary details in a .env file.
     - DB_TYPE
     - DB_HOST
