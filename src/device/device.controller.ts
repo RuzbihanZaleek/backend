@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,6 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
@@ -17,6 +19,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/role/guards/roles.guard';
 import { Roles } from 'src/role/decorator/roles.decorator';
 import { Role } from 'src/types/roles.enum';
+import { DeviceType } from 'src/types/enums';
+import { MESSAGES } from 'src/common/constants/messages.constants';
 
 @Controller('devices')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -28,7 +32,6 @@ export class DeviceController {
   @Post()
   async createDevice(
     @Body() createDeviceDto: CreateDeviceDto,
-    @Query('locationId') locationId: number,
   ): Promise<Device> {
     return this.deviceService.createDevice(createDeviceDto);
   }
@@ -37,6 +40,21 @@ export class DeviceController {
   @Get()
   async findAll(): Promise<Device[]> {
     return this.deviceService.findAll();
+  }
+
+  // Get devices by type
+  @Get('by-type')
+  async findByType(
+    @Query('type', new ValidationPipe({ transform: true, whitelist: true }))
+    type: DeviceType,
+  ): Promise<Device[]> {
+    if (!Object.values(DeviceType).includes(type)) {
+      throw new BadRequestException(
+        MESSAGES.ERROR.DEVICE.DEVICE_TYPE_NOT_FOUND(type),
+      );
+    }
+
+    return this.deviceService.findByType(type);
   }
 
   // Get a specific device by ID

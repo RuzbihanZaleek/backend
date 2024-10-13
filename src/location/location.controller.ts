@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { LocationService } from './location.service';
@@ -36,6 +37,13 @@ export class LocationController {
     return this.locationService.findAll();
   }
 
+  @Get('by-title')
+  async findByTitle(
+    @Query('title') title: string,
+  ): Promise<LocationResponseDto> {
+    return this.locationService.findByTitle(title);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<LocationResponseDto> {
     return this.locationService.findOneById(id);
@@ -57,7 +65,7 @@ export class LocationController {
   }
 
   @Roles(Role.SuperAdmin, Role.Admin)
-  @Patch('soft_delete/:id')
+  @Patch('soft-delete/:id')
   async softDeleteLocation(
     @Param('id') id: number,
   ): Promise<{ message: string }> {
