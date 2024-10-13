@@ -8,17 +8,18 @@ import { UserService } from 'src/user/user.service';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private usersService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Extract token from Authorization header
-      ignoreExpiration: false, // Do not ignore expiration
-      secretOrKey: process.env.JWT_SECRET || 'yourSecretKey', // Use your secret key
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: process.env.JWT_SECRET,
     });
   }
 
   async validate(payload: any): Promise<User> {
-    const user = await this.usersService.findById(payload.sub); // Find user by id in the token payload
+    // Find user by email in the token payload
+    const user = await this.usersService.findByEmail(payload.email);
     if (!user) {
       throw new UnauthorizedException();
     }
-    return user; // Return user if found
+    return user;
   }
 }

@@ -10,7 +10,7 @@ import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { MESSAGES } from 'src/common/constants/messages.constants';
-import { ROLE_MAPPING } from 'src/common/constants/roles.constants';
+import { ROLE_MAPPING, Role } from 'src/types/roles.enum';
 
 @Injectable()
 export class AuthService {
@@ -19,8 +19,16 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<User> {
+  async register(registerDto: RegisterDto, currentUser: User): Promise<User> {
     const { password, role } = registerDto;
+
+    // Validate the role for admin creation
+    if (role === Role.Admin) {
+      const currentUserRole = currentUser.role.role_name;      
+      if (currentUserRole !== Role.SuperAdmin) {
+        throw new BadRequestException('Only Super Admins can create Admin users.');
+      }
+    }
 
     // validate the role
     const roleId = ROLE_MAPPING[role];
@@ -46,7 +54,7 @@ export class AuthService {
   }
 
   async login(req: LoginDto) {
-    const payload = { email: req.email, password: req.password };
+    const payload = { email: req.email };
     return {
       accessToken: this.jwtService.sign(payload),
     };

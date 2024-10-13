@@ -60,8 +60,6 @@ export class LocationService {
         user_id: userLocation.user.id,
       }));
 
-    console.log(transformedUserLocations);
-
     return {
       ...location,
       user_locations: transformedUserLocations,
