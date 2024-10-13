@@ -12,6 +12,7 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UserLocationDto } from 'src/user/dto/user-location.dto';
 import { LocationResponseDto } from 'src/user/dto/location-response.dto';
 import { MESSAGES } from 'src/common/constants/messages.constants';
+import { LocationUtil } from 'src/utils/location.util';
 
 @Injectable()
 export class LocationService {
@@ -51,14 +52,12 @@ export class LocationService {
 
   // Get a location by passing the location id
   async findOneById(id: number): Promise<LocationResponseDto> {
-    const location = await this.locationRepository.findOne({
-      where: { id },
-      relations: ['devices', 'user_locations', 'user_locations.user'],
-    });
-
-    if (!location) {
-      throw new NotFoundException(`Location with ID ${id} not found`);
-    }
+    const location = await LocationUtil.findLocation(
+      this.locationRepository,
+      { id: id },
+      ['devices', 'user_locations', 'user_locations.user'],
+      MESSAGES.ERROR.LOCATION.LOCATION_ID_NOT_FOUND(id),
+    );
 
     const transformedUserLocations: UserLocationDto[] =
       location.user_locations.map((userLocation) => ({
@@ -78,12 +77,9 @@ export class LocationService {
     const { title, address, status, userIds } = createLocationDto;
 
     // Check if a location with the same address already exists
-    const existingLocation = await this.locationRepository.findOne({
-      where: { address },
+    await LocationUtil.checkIfLocationExists(this.locationRepository, {
+      address,
     });
-    if (existingLocation) {
-      throw new ConflictException(MESSAGES.ERROR.LOCATION.LOCATION_ALREADY_EXISTS);
-    }
 
     const users = await this.userRepository.find({
       where: { id: In(userIds) },
@@ -117,21 +113,18 @@ export class LocationService {
     id: number,
     updateData: Partial<Location>,
   ): Promise<Location> {
-    const location = await this.locationRepository.findOne({ where: { id } });
-    if (!location) {
-      throw new NotFoundException(MESSAGES.ERROR.LOCATION.LOCATION_ID_NOT_FOUND(id));
-    }
+    const location = await LocationUtil.findLocation(this.locationRepository, {
+      id: id,
+    });
+
+    const address = updateData.address;
 
     // Check if the updated address already exists in another location
-    if (updateData.address && updateData.address !== location.address) {
-      const existingLocation = await this.locationRepository.findOne({
-        where: { address: updateData.address },
+    if (address && address !== location.address) {
+      // Check if a location with the same address already exists
+      await LocationUtil.checkIfLocationExists(this.locationRepository, {
+        address,
       });
-      if (existingLocation) {
-        throw new ConflictException(
-          MESSAGES.ERROR.LOCATION.LOCATION_ALREADY_EXISTS,
-        );
-      }
     }
 
     this.locationRepository.merge(location, updateData);
@@ -140,10 +133,10 @@ export class LocationService {
 
   // Delete a location by passing the location id
   async deleteLocation(id: number): Promise<{ message: string }> {
-    const location = await this.locationRepository.findOne({ where: { id } });
-    if (!location) {
-      throw new NotFoundException(MESSAGES.ERROR.LOCATION.LOCATION_ID_NOT_FOUND(id));
-    }
+    const location = await LocationUtil.findLocation(this.locationRepository, {
+      id: id,
+    });
+
     await this.locationRepository.remove(location);
 
     return { message: MESSAGES.SUCCESS.LOCATION.LOCATION_DELETED };
