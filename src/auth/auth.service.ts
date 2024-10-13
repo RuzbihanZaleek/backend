@@ -23,10 +23,12 @@ export class AuthService {
     const { password, role } = registerDto;
 
     // Validate the role for admin creation
-    if (role === Role.Admin) {
-      const currentUserRole = currentUser.role.role_name;      
+    if (role === Role.Admin || role === Role.SuperAdmin) {
+      const currentUserRole = currentUser.role.role_name;
       if (currentUserRole !== Role.SuperAdmin) {
-        throw new BadRequestException('Only Super Admins can create Admin users.');
+        throw new BadRequestException(
+          'Only Super Admins can create Admin & Super Admin users.',
+        );
       }
     }
 
