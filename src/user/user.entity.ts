@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Role } from '../role/role.entity';
 import { UserLocation } from './user-location.entity';
 
 @Entity('users')

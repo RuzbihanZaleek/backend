@@ -14,8 +14,8 @@ import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Device } from './device.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/role/guards/roles.guard';
+import { Roles } from 'src/role/decorator/roles.decorator';
 import { Role } from 'src/types/roles.enum';
 
 @Controller('devices')

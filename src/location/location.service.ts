@@ -10,7 +10,7 @@ import { UserLocation } from 'src/user/user-location.entity';
 import { User } from 'src/user/user.entity';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UserLocationDto } from 'src/user/dto/user-location.dto';
-import { LocationResponseDto } from 'src/user/dto/location-response.dto';
+import { LocationResponseDto } from 'src/location/dto/location-response.dto';
 import { MESSAGES } from 'src/common/constants/messages.constants';
 import { LocationUtil } from 'src/utils/location.util';
 

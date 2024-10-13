@@ -12,10 +12,10 @@ import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { Location } from './location.entity';
-import { LocationResponseDto } from 'src/user/dto/location-response.dto';
-import { Roles } from 'src/auth/roles.decorator';
+import { LocationResponseDto } from 'src/location/dto/location-response.dto';
+import { Roles } from 'src/role/decorator/roles.decorator';
 import { Role } from 'src/types/roles.enum';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { RolesGuard } from 'src/role/guards/roles.guard';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('locations')

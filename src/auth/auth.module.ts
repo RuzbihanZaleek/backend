@@ -7,7 +7,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { User } from 'src/user/user.entity';
-import { Role } from 'src/user/role.entity';
+import { Role } from 'src/role/role.entity';
 import { UsersModule } from 'src/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
