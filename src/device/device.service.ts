@@ -128,4 +128,12 @@ export class DeviceService {
     await this.deviceRepository.remove(device); // Remove the device
     return { message: MESSAGES.SUCCESS.DEVICE.DEVICE_DELETED };
   }
+
+  // Soft delete a device by ID (set isDeleted to true)
+  async softDeleteDevice(id: number): Promise<{ message: string }> {
+    const device = await this.findOneById(id);
+    device.isDeleted = true;
+    await this.deviceRepository.save(device);
+    return { message: MESSAGES.SUCCESS.DEVICE.DEVICE_DELETED };
+  }
 }

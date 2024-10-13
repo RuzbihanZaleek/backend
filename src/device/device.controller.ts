@@ -61,4 +61,12 @@ export class DeviceController {
   async deleteDevice(@Param('id') id: number): Promise<{ message: string }> {
     return this.deviceService.deleteDevice(id);
   }
+
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @Patch('soft_delete/:id')
+  async softDeleteDevice(
+    @Param('id') id: number,
+  ): Promise<{ message: string }> {
+    return this.deviceService.softDeleteDevice(id);
+  }
 }
