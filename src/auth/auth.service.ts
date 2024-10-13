@@ -29,14 +29,14 @@ export class AuthService {
     if (role === Role.Admin || role === Role.SuperAdmin) {
       const currentUserRole = currentUser.role.role_name;
       if (currentUserRole !== Role.SuperAdmin) {
-        throw new BadRequestException(MESSAGES.ERROR.CANNOT_CREATE_ADMIN_ROLES);
+        throw new BadRequestException(MESSAGES.ERROR.VALIDATION.CANNOT_CREATE_ADMIN_ROLES);
       }
     }
 
     // Check for uniqueness in the database
     const existingUser = await this.usersService.findByEmail(email);
     if (existingUser) {
-      throw new BadRequestException(MESSAGES.ERROR.EMAIL_IN_USE(email));
+      throw new BadRequestException(MESSAGES.ERROR.VALIDATION.EMAIL_IN_USE(email));
     }
 
     // validate the role
@@ -55,7 +55,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException(MESSAGES.ERROR.INVALID_CREDENTIALS);
+      throw new UnauthorizedException(MESSAGES.ERROR.VALIDATION.INVALID_CREDENTIALS);
     }
     return user;
   }

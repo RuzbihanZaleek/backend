@@ -23,8 +23,8 @@ export class CreateLocationDto {
   @IsEnum(Status)
   status?: Status;
 
-  @IsArray({ message: MESSAGES.ERROR.ARRAY_OF_NUMBERS })
-  @ArrayNotEmpty({ message: MESSAGES.ERROR.EMPTY_ARRAY })
-  @IsNumber({}, { each: true, message: MESSAGES.ERROR.ARRAY_OF_NUMBERS })
+  @IsArray({ message: MESSAGES.ERROR.VALIDATION.ARRAY_OF_NUMBERS })
+  @ArrayNotEmpty({ message: MESSAGES.ERROR.VALIDATION.EMPTY_ARRAY })
+  @IsNumber({}, { each: true, message: MESSAGES.ERROR.VALIDATION.ARRAY_OF_NUMBERS })
   userIds: number[];
 }

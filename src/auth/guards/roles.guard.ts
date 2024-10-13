@@ -27,7 +27,7 @@ export class RolesGuard implements CanActivate {
 
     // Check if user has a role and if it is one of the required roles
     if (!user || !user.role || !requiredRoles.includes(user.role.role_name)) {
-      throw new ForbiddenException(MESSAGES.ERROR.UNAUTHORIZED);
+      throw new ForbiddenException(MESSAGES.ERROR.VALIDATION.UNAUTHORIZED);
     }
 
     return true;

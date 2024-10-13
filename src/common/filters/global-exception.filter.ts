@@ -23,7 +23,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception.message || MESSAGES.ERROR.INTERNAL_SERVER_ERROR,
+      message: exception.message || MESSAGES.ERROR.VALIDATION.INTERNAL_SERVER_ERROR,
     };
 
     response.status(status).json(responseBody);

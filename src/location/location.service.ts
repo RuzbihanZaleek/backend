@@ -82,14 +82,14 @@ export class LocationService {
       where: { address },
     });
     if (existingLocation) {
-      throw new ConflictException(MESSAGES.ERROR.LOCATION_ALREADY_EXISTS);
+      throw new ConflictException(MESSAGES.ERROR.LOCATION.LOCATION_ALREADY_EXISTS);
     }
 
     const users = await this.userRepository.find({
       where: { id: In(userIds) },
     });
     if (users.length !== userIds.length) {
-      throw new NotFoundException(MESSAGES.ERROR.USERS_NOT_FOUND);
+      throw new NotFoundException(MESSAGES.ERROR.VALIDATION.USERS_NOT_FOUND);
     }
 
     const location = this.locationRepository.create({
@@ -119,7 +119,7 @@ export class LocationService {
   ): Promise<Location> {
     const location = await this.locationRepository.findOne({ where: { id } });
     if (!location) {
-      throw new NotFoundException(MESSAGES.ERROR.LOCATION_ID_NOT_FOUND(id));
+      throw new NotFoundException(MESSAGES.ERROR.LOCATION.LOCATION_ID_NOT_FOUND(id));
     }
 
     // Check if the updated address already exists in another location
@@ -129,7 +129,7 @@ export class LocationService {
       });
       if (existingLocation) {
         throw new ConflictException(
-          MESSAGES.ERROR.LOCATION_ALREADY_EXISTS,
+          MESSAGES.ERROR.LOCATION.LOCATION_ALREADY_EXISTS,
         );
       }
     }
@@ -142,10 +142,10 @@ export class LocationService {
   async deleteLocation(id: number): Promise<{ message: string }> {
     const location = await this.locationRepository.findOne({ where: { id } });
     if (!location) {
-      throw new NotFoundException(MESSAGES.ERROR.LOCATION_ID_NOT_FOUND(id));
+      throw new NotFoundException(MESSAGES.ERROR.LOCATION.LOCATION_ID_NOT_FOUND(id));
     }
     await this.locationRepository.remove(location);
 
-    return { message: MESSAGES.SUCCESS.LOCATION_DELETED };
+    return { message: MESSAGES.SUCCESS.LOCATION.LOCATION_DELETED };
   }
 }
