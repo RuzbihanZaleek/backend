@@ -1,6 +1,6 @@
 ## Description
 
-[Nest](https://github.com/nestjs/nest) Location Devices Management Application.
+Location Devices Management Application.
 
 ## Project setup
 
