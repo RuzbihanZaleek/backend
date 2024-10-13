@@ -21,7 +21,7 @@ export class LocationService {
     private readonly userLocationRepository: Repository<UserLocation>,
   ) {}
 
-  // find all locations
+  // Get all locations
   async findAll(): Promise<LocationResponseDto[]> {
     const locations = await this.locationRepository.find({
       relations: ['devices', 'user_locations', 'user_locations.user'],
@@ -44,7 +44,7 @@ export class LocationService {
     return transformedLocations;
   }
 
-  // find a location by passing the location id
+  // Get a location by passing the location id
   async findOneById(id: number): Promise<LocationResponseDto> {
     const location = await this.locationRepository.findOne({
       where: { id },
@@ -68,16 +68,16 @@ export class LocationService {
     };
   }
 
-  // create location
+  // Create location
   async createLocation(
     createLocationDto: CreateLocationDto,
   ): Promise<Location> {
-    const { title, address, status = 'Active', userIds } = createLocationDto;
+    const { title, address, status, userIds } = createLocationDto;
 
     const location = this.locationRepository.create({
       title,
       address,
-      status: status as 'Active' | 'Inactive',
+      status,
     });
 
     const savedLocation = await this.locationRepository.save(location);
@@ -103,7 +103,7 @@ export class LocationService {
     return savedLocation;
   }
 
-  // update a location by passing the location id
+  // Update a location by passing the location id
   async updateLocation(
     id: number,
     updateData: Partial<Location>,
@@ -116,14 +116,14 @@ export class LocationService {
     return this.locationRepository.save(location);
   }
 
-  // delete a location by passing the location id
-  async deleteLocation(id: number): Promise<string> {
+  // Delete a location by passing the location id
+  async deleteLocation(id: number): Promise<{ message: string }> {
     const location = await this.locationRepository.findOne({ where: { id } });
     if (!location) {
       throw new NotFoundException(`Location with ID ${id} not found`);
     }
     await this.locationRepository.remove(location);
 
-    return `Location with ID ${id} deleted successfully`;
+    return { message: `Location with ID ${id} deleted successfully` };
   }
 }

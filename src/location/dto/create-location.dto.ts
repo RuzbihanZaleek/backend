@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Status } from 'src/types/enums';
 
 export class CreateLocationDto {
   @IsNotEmpty()
@@ -17,8 +18,8 @@ export class CreateLocationDto {
   address: string;
 
   @IsOptional()
-  @IsEnum(['Active', 'Inactive'])
-  status?: 'Active' | 'Inactive';
+  @IsEnum(Status)
+  status?: Status;
 
   @IsArray()
   @IsNumber({}, { each: true })

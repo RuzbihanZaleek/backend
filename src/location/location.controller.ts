@@ -43,7 +43,7 @@ export class LocationController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise<string> {
+  async remove(@Param('id') id: number): Promise<{message: string}> {
     return this.locationService.deleteLocation(id);
   }
 }
