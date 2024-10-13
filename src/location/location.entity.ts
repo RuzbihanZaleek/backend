@@ -21,6 +21,9 @@ export class Location {
   })
   status: Status;
 
+  @Column({ type: 'boolean', default: false })
+  isDeleted: boolean;
+
   @OneToMany(() => Device, (device) => device.location)
   devices: Device[];
 

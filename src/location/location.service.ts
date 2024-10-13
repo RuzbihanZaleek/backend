@@ -141,4 +141,14 @@ export class LocationService {
 
     return { message: MESSAGES.SUCCESS.LOCATION.LOCATION_DELETED };
   }
+
+  // Soft delete a device by ID (set isDeleted to true)
+  async softDeleteLocation(id: number): Promise<{ message: string }> {
+    const location = await LocationUtil.findLocation(this.locationRepository, {
+      id: id,
+    });
+    location.isDeleted = true;
+    await this.locationRepository.save(location);
+    return { message: MESSAGES.SUCCESS.LOCATION.LOCATION_DELETED };
+  }
 }

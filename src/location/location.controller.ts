@@ -55,4 +55,12 @@ export class LocationController {
   async remove(@Param('id') id: number): Promise<{ message: string }> {
     return this.locationService.deleteLocation(id);
   }
+
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @Patch('soft_delete/:id')
+  async softDeleteLocation(
+    @Param('id') id: number,
+  ): Promise<{ message: string }> {
+    return this.locationService.softDeleteLocation(id);
+  }
 }
