@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Location } from './location.entity';
@@ -72,6 +76,16 @@ export class LocationService {
   ): Promise<Location> {
     const { title, address, status, userIds } = createLocationDto;
 
+    // Check if a location with the same address already exists
+    const existingLocation = await this.locationRepository.findOne({
+      where: { address },
+    });
+    if (existingLocation) {
+      throw new ConflictException(
+        'A location with this address already exists',
+      );
+    }
+
     const location = this.locationRepository.create({
       title,
       address,
@@ -110,6 +124,19 @@ export class LocationService {
     if (!location) {
       throw new NotFoundException(`Location with ID ${id} not found`);
     }
+
+    // Check if the updated address already exists in another location
+    if (updateData.address && updateData.address !== location.address) {
+      const existingLocation = await this.locationRepository.findOne({
+        where: { address: updateData.address },
+      });
+      if (existingLocation) {
+        throw new ConflictException(
+          'A location with this address already exists',
+        );
+      }
+    }
+
     this.locationRepository.merge(location, updateData);
     return this.locationRepository.save(location);
   }
