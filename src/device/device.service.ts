@@ -12,6 +12,7 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Location } from 'src/location/location.entity';
 import { MESSAGES } from 'src/common/constants/messages.constants';
 import { LocationUtil } from 'src/utils/location.util';
+import { DeviceType } from 'src/types/enums';
 
 @Injectable()
 export class DeviceService {
@@ -76,6 +77,24 @@ export class DeviceService {
     }
 
     return device;
+  }
+
+  // Get devices by passing the location type
+  async findByType(type: DeviceType): Promise<Device[]> {
+    const devices = await this.deviceRepository.find({
+      where: { type },
+    });
+
+    if (!devices || devices.length === 0) {
+      throw new NotFoundException(`No devices found for type: ${type}`);
+    }
+
+    // Use Promise.all to call findOneById for each device's id
+    const detailedDevices = await Promise.all(
+      devices.map((device) => this.findOneById(device.id)),
+    );
+
+    return detailedDevices;
   }
 
   // Update a device

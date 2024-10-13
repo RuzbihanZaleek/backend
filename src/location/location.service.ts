@@ -70,6 +70,15 @@ export class LocationService {
     };
   }
 
+  // Get a location by passing the location title
+  async findByTitle(title: string): Promise<LocationResponseDto> {
+    const location = await LocationUtil.findLocation(this.locationRepository, {
+      title,
+    });
+
+    return this.findOneById(location?.id);
+  }
+
   // Create location
   async createLocation(
     createLocationDto: CreateLocationDto,
