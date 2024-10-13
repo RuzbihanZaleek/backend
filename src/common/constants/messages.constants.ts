@@ -1,3 +1,5 @@
+import { DeviceType } from 'src/types/enums';
+
 export const MESSAGES = {
   SUCCESS: {
     USER: {
@@ -32,11 +34,15 @@ export const MESSAGES = {
     LOCATION: {
       LOCATION_ALREADY_EXISTS: 'A location with this address already exists',
       LOCATION_ID_NOT_FOUND: (id: number) => `Location with ID ${id} not found`,
+      LOCATION_NOT_FOUND: (title: string) =>
+        `Location with title ${title} not found`,
     },
     DEVICE: {
       MORE_DEVICES: 'A location cannot have more than 10 devices',
       SERIAL_NUMBER_EXISTS: 'Device with this serial number already exists',
       DEVICE_NOT_FOUND: (id: number) => `Device with ID ${id} not found`,
+      DEVICE_TYPE_NOT_FOUND: (type: DeviceType) =>
+        `Invalid device type: ${type}. Allowed types: ${Object.values(DeviceType).join(', ')}`,
     },
   },
 };
