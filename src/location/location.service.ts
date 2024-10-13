@@ -11,6 +11,7 @@ import { User } from 'src/user/user.entity';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UserLocationDto } from 'src/user/dto/user-location.dto';
 import { LocationResponseDto } from 'src/user/dto/location-response.dto';
+import { MESSAGES } from 'src/common/constants/messages.constants';
 
 @Injectable()
 export class LocationService {
@@ -81,9 +82,14 @@ export class LocationService {
       where: { address },
     });
     if (existingLocation) {
-      throw new ConflictException(
-        'A location with this address already exists',
-      );
+      throw new ConflictException(MESSAGES.ERROR.LOCATION_ALREADY_EXISTS);
+    }
+
+    const users = await this.userRepository.find({
+      where: { id: In(userIds) },
+    });
+    if (users.length !== userIds.length) {
+      throw new NotFoundException(MESSAGES.ERROR.USERS_NOT_FOUND);
     }
 
     const location = this.locationRepository.create({
@@ -94,23 +100,14 @@ export class LocationService {
 
     const savedLocation = await this.locationRepository.save(location);
 
-    if (userIds && userIds.length > 0) {
-      const users = await this.userRepository.find({
-        where: { id: In(userIds) },
-      });
-      if (users.length !== userIds.length) {
-        throw new NotFoundException('Some users not found');
-      }
+    const userLocations = users.map((user) => {
+      const userLocation = new UserLocation();
+      userLocation.user = user;
+      userLocation.location = savedLocation;
+      return userLocation;
+    });
 
-      const userLocations = users.map((user) => {
-        const userLocation = new UserLocation();
-        userLocation.user = user;
-        userLocation.location = savedLocation;
-        return userLocation;
-      });
-
-      await this.userLocationRepository.save(userLocations);
-    }
+    await this.userLocationRepository.save(userLocations);
 
     return savedLocation;
   }
@@ -122,7 +119,7 @@ export class LocationService {
   ): Promise<Location> {
     const location = await this.locationRepository.findOne({ where: { id } });
     if (!location) {
-      throw new NotFoundException(`Location with ID ${id} not found`);
+      throw new NotFoundException(MESSAGES.ERROR.LOCATION_ID_NOT_FOUND(id));
     }
 
     // Check if the updated address already exists in another location
@@ -132,7 +129,7 @@ export class LocationService {
       });
       if (existingLocation) {
         throw new ConflictException(
-          'A location with this address already exists',
+          MESSAGES.ERROR.LOCATION_ALREADY_EXISTS,
         );
       }
     }
@@ -145,10 +142,10 @@ export class LocationService {
   async deleteLocation(id: number): Promise<{ message: string }> {
     const location = await this.locationRepository.findOne({ where: { id } });
     if (!location) {
-      throw new NotFoundException(`Location with ID ${id} not found`);
+      throw new NotFoundException(MESSAGES.ERROR.LOCATION_ID_NOT_FOUND(id));
     }
     await this.locationRepository.remove(location);
 
-    return { message: `Location with ID ${id} deleted successfully` };
+    return { message: MESSAGES.SUCCESS.LOCATION_DELETED };
   }
 }

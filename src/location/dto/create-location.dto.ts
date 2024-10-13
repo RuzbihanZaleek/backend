@@ -1,4 +1,5 @@
 import {
+  ArrayNotEmpty,
   IsArray,
   IsEnum,
   IsNotEmpty,
@@ -6,6 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { MESSAGES } from 'src/common/constants/messages.constants';
 import { Status } from 'src/types/enums';
 
 export class CreateLocationDto {
@@ -21,7 +23,8 @@ export class CreateLocationDto {
   @IsEnum(Status)
   status?: Status;
 
-  @IsArray()
-  @IsNumber({}, { each: true })
+  @IsArray({ message: MESSAGES.ERROR.ARRAY_OF_NUMBERS })
+  @ArrayNotEmpty({ message: MESSAGES.ERROR.EMPTY_ARRAY })
+  @IsNumber({}, { each: true, message: MESSAGES.ERROR.ARRAY_OF_NUMBERS })
   userIds: number[];
 }
